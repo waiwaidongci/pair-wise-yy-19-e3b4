@@ -3,22 +3,34 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>岩芯薄片显微照片索引台</title>
+  <title>岩芯薄片显微照片索引台 · 可续传工作区</title>
   <link rel="stylesheet" href="./style.css" />
 </head>
 <body>
   <main class="shell">
     <header class="mast">
       <div>
-        <p>Petrographic Slide Index</p>
+        <p>Petrographic Slide Index · Sync Workspace</p>
         <h1>岩芯薄片显微照片索引台</h1>
       </div>
-      <button id="exportBtn" type="button">导出观察清单</button>
+      <div class="mast-actions">
+        <label class="station">台站/队伍
+          <input id="stationInput" placeholder="实验室">
+        </label>
+        <button id="importBtn" type="button">导入野外批次</button>
+        <input id="batchFile" type="file" accept="application/json,.json" hidden>
+        <button id="exportBatchBtn" type="button">导出野外批次</button>
+        <button id="exportBtn" type="button">导出观察清单</button>
+      </div>
     </header>
+
+    <p id="notice" class="notice" role="status"></p>
+
+    <section id="overview" class="overview" aria-label="总览"></section>
 
     <section class="layout">
       <form id="sampleForm" class="editor">
-        <h2>样本录入</h2>
+        <h2 id="formTitle">样本录入</h2>
         <label>显微照片<input id="photoInput" type="file" accept="image/*"></label>
         <label>样本编号<input name="code" required placeholder="BX-17-03"></label>
         <label>采样地点<input name="location" placeholder="剖面东侧第二层"></label>
@@ -34,8 +46,11 @@
         </div>
         <label>主要矿物<input name="minerals" placeholder="石英、斜长石、黑云母"></label>
         <label>颗粒结构<input name="texture" placeholder="半自形粒状、碎裂结构"></label>
-        <label>老师批注<textarea name="comment" rows="4" placeholder="记录鉴定依据或疑点"></textarea></label>
-        <button type="submit">保存样本</button>
+        <label>鉴定结论<input name="conclusion" placeholder="花岗闪长岩"></label>
+        <label>老师批注<textarea name="comment" rows="3" placeholder="记录鉴定依据或疑点"></textarea></label>
+        <p id="editHint" class="hint" hidden>正在编辑已有样本：不选择新照片则保留原照片；修改样本编号或偏光会让相关对比与放行立即失效。</p>
+        <button type="submit" id="submitBtn">保存样本</button>
+        <button type="button" id="cancelEditBtn" class="ghost" hidden>取消编辑</button>
       </form>
 
       <section class="board">
@@ -47,14 +62,30 @@
             <option>正交偏光</option>
             <option>反射光</option>
           </select>
+          <label class="check"><input id="conflictOnly" type="checkbox">只看待裁决</label>
         </div>
         <div id="sampleGrid" class="sample-grid"></div>
       </section>
 
-      <aside class="compare">
-        <h2>并排对比</h2>
-        <div id="comparePane" class="compare-pane"></div>
+      <aside class="side">
+        <section class="panel">
+          <h2>冲突裁决 <span id="conflictCount" class="pill"></span></h2>
+          <div id="conflictList" class="conflict-list"></div>
+        </section>
+        <section class="panel">
+          <h2>并排对比</h2>
+          <div id="comparePane" class="compare-pane"></div>
+        </section>
+        <section class="panel">
+          <h2>放行记录</h2>
+          <ul id="releaseList" class="release-list"></ul>
+        </section>
       </aside>
+    </section>
+
+    <section class="panel history-panel">
+      <h2>履历</h2>
+      <ol id="historyList" class="history-list"></ol>
     </section>
   </main>
   <script src="./app.js"></script>
