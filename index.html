@@ -3,18 +3,20 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>岩芯薄片显微照片索引台</title>
+  <title>岩芯薄片显微照片索引台 · 续传工作区</title>
   <link rel="stylesheet" href="./style.css" />
 </head>
 <body>
   <main class="shell">
     <header class="mast">
       <div>
-        <p>Petrographic Slide Index</p>
+        <p>Petrographic Slide Index · Resumable Workspace</p>
         <h1>岩芯薄片显微照片索引台</h1>
       </div>
       <button id="exportBtn" type="button">导出观察清单</button>
     </header>
+
+    <div id="statsBar" class="stats-bar" aria-live="polite"></div>
 
     <section class="layout">
       <form id="sampleForm" class="editor">
@@ -35,7 +37,21 @@
         <label>主要矿物<input name="minerals" placeholder="石英、斜长石、黑云母"></label>
         <label>颗粒结构<input name="texture" placeholder="半自形粒状、碎裂结构"></label>
         <label>老师批注<textarea name="comment" rows="4" placeholder="记录鉴定依据或疑点"></textarea></label>
-        <button type="submit">保存样本</button>
+        <div class="form-actions">
+          <button type="submit" id="submitBtn">保存样本</button>
+          <button type="button" id="cancelEditBtn" class="ghost" hidden>取消编辑</button>
+        </div>
+
+        <div class="import-box">
+          <h3>现场批次导入</h3>
+          <p class="hint">两组地质员断网修改后带回的 JSON 批次，按样本编号合并；同一条薄片两边都动过照片、偏光或鉴定结论时保留两份候选待裁决。</p>
+          <input id="batchInput" type="file" accept="application/json,.json">
+          <div class="import-actions">
+            <button type="button" id="importBtn">导入现场批次</button>
+            <button type="button" id="templateBtn" class="ghost">下载批次模板</button>
+          </div>
+          <div id="importStatus" class="import-status" aria-live="polite"></div>
+        </div>
       </form>
 
       <section class="board">
@@ -56,7 +72,22 @@
         <div id="comparePane" class="compare-pane"></div>
       </aside>
     </section>
+
+    <section class="history-panel">
+      <h2>履历</h2>
+      <div id="historyList" class="history-list" aria-live="polite"></div>
+    </section>
   </main>
+
+  <dialog id="adjudicateDialog" class="adjudicate-dialog">
+    <div class="dialog-head">
+      <h2>裁决冲突</h2>
+      <button type="button" id="closeDialogBtn" class="ghost">关闭</button>
+    </div>
+    <p id="dialogSub" class="hint"></p>
+    <div id="candidateGrid" class="candidate-grid"></div>
+  </dialog>
+
   <script src="./app.js"></script>
 </body>
 </html>
